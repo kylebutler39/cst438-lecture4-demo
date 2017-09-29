@@ -83,9 +83,21 @@ function getTweets(accessToken, sendResponseToBrowser) {
             // console.log("status code: " + this.statusCode); 
             //console.log("Complete response: " + completeResponse); 
             
-            var responseJSON = JSON.parse(completeResponse); 
-            var tweetsList = responseJSON.statuses; 
-            sendResponseToBrowser(tweetsList); 
+            var error = null;
+            var tweetsList;
+            
+            if(this.statusCode != 200) {
+                // error
+                error = completeResponse;
+            }
+            else {
+                // success
+                var responseJSON = JSON.parse(completeResponse); 
+                tweetsList = responseJSON.statuses; 
+            }
+            
+            
+            sendResponseToBrowser(error, tweetsList); 
       }); 
     });
     
@@ -97,8 +109,8 @@ function getTweets(accessToken, sendResponseToBrowser) {
 
 function doAllTwitterRequests(callback) {
     getAccessToken(function(accessToken) {
-        getTweets(accessToken, function(tweets) {
-            callback(null, tweets); 
+        getTweets(accessToken, function(error, tweets) {
+            callback(error, tweets); 
         }); 
     }); 
 }
